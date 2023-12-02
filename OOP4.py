@@ -15,9 +15,10 @@ class Student:
         grade_num = 0
         average_grade = 0
         for course in all_courses:
-            grade_num += len(self.grades[course])
-            for grade in self.grades[course]:
-                sums_grade += grade
+            if course in self.grades:
+                grade_num += len(self.grades[course])
+                for grade in self.grades[course]:
+                    sums_grade += grade
         if grade_num != 0:
             average_grade = sums_grade/grade_num
         return average_grade
@@ -58,9 +59,10 @@ class Lecturer(Mentor):
         grade_num = 0
         average_grade = 0
         for course in all_courses:
-            grade_num += len(self.student_grades[course])
-            for grade in self.student_grades[course]:
-                sums_grade += grade
+            if course in self.student_grades:
+                grade_num += len(self.student_grades[course])
+                for grade in self.student_grades[course]:
+                    sums_grade += grade
         if grade_num != 0:
             average_grade = sums_grade/grade_num
         return average_grade
@@ -87,6 +89,30 @@ class Reviewer(Mentor):
                 student.grades[course] = [grade]
         else:
             return 'Ошибка'
+        
+def MakeAvStudentsGrade(students = [], course = ""):
+    Sums_Grades = 0
+    Grades_Num = 0
+    for student in students:
+        if isinstance(student, Student):
+            all_courses = student.finished_courses + student.courses_in_progress
+            if course in all_courses:
+                Sums_Grades += student.make_average_grade()
+                Grades_Num += 1
+    if Grades_Num != 0:
+        print(f"Средняя оценка всех студентов на курсе {course} составляет {Sums_Grades/Grades_Num} баллов")
+
+def MakeAvLectorsGrade(lectors = [], course = ""):
+    Sums_Grades = 0
+    Grades_Num = 0
+    for lector in lectors:
+        if isinstance(lector, Lecturer):
+            all_courses = lector.courses_attached
+            if course in all_courses:
+                Sums_Grades += lector.make_average_grade_lector()
+                Grades_Num += 1
+    if Grades_Num != 0:
+        print(f"Средняя оценка всех лекторов на курсе {course} составляет {Sums_Grades/Grades_Num} баллов")            
 
 best_student = Student('Ruoy', 'Eman', 'your_gender')
 best_student.courses_in_progress += ['Python']
@@ -99,19 +125,35 @@ cool_mentor.rate_hw(best_student, 'Python', 10)
 cool_mentor.rate_hw(best_student, 'Python', 10)
 
 Lecturer1 = Lecturer("Иван Иваныч", "Иванов")
+Lecturer2= Lecturer("Семен Семеныч", "Семенов")
 Reviewer1 = Reviewer("Петр Петрович", "Петров") 
 print(best_student.grades)
 print(Lecturer1.name, Lecturer1.surname)
 print(Reviewer1.name, Reviewer1.surname)
 
-best_student.rate_lectors(Lecturer1, 'Python', 10)
-print(Lecturer1.student_grades)
+best_student.rate_lectors(Lecturer2, 'Python', 10)
 Lecturer1.courses_attached += ['Python']
-best_student.rate_lectors(Lecturer1, 'Python', 10)
-print(Lecturer1.student_grades)
+best_student.rate_lectors(Lecturer2, 'Python', 10)
 best_student.rate_lectors(Lecturer1, 'Python', 8)
 best_student.rate_lectors(Lecturer1, 'Python', 7)
 best_student.rate_lectors(Lecturer1, 'Python', 9)
+bad_student = Student("Андрей", "Андреев", "20")
+bad_student.courses_in_progress += ['Python']
+bad_student.finished_courses += ['Оператор ПК']
+bad_student.rate_lectors(Lecturer1, 'Python', 3)
+bad_student.rate_lectors(Lecturer1, 'Python', 5)
+bad_student.rate_lectors(Lecturer1, 'Python', 8)
+bad_student.rate_lectors(Lecturer2, 'Python', 3)
+bad_student.rate_lectors(Lecturer2, 'Python', 5)
+bad_student.rate_lectors(Lecturer2, 'Python', 8)
+Reviewer1.rate_hw(bad_student,'Python', 2)
+Reviewer1.rate_hw(bad_student,'Python', 3)
+Reviewer1.rate_hw(bad_student,'Python', 5)
 print(Lecturer1)
+print(Lecturer1.comparelector(Lecturer2))
 print(Reviewer1)
 print(best_student)
+print(best_student.comparestudent(bad_student))
+MakeAvLectorsGrade([Lecturer1, Lecturer2], 'Python')
+MakeAvStudentsGrade([best_student, bad_student], 'Python')
+
