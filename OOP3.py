@@ -30,6 +30,11 @@ class Student:
                 lector.student_grades[course] = [grade]
         else:
             return 'Ошибка'
+    def __lt__(self, other):
+        if isinstance(other, Student):
+            myAvGrade = self.make_average_grade()
+            anotherAvGrade = other.make_average_grade()
+            return myAvGrade < anotherAvGrade    
     def comparestudent(self, another_stud):
         if isinstance(another_stud, Student):
             myAvGrade = self.make_average_grade()
@@ -64,6 +69,11 @@ class Lecturer(Mentor):
         if grade_num != 0:
             average_grade = sums_grade/grade_num
         return average_grade
+    def __lt__(self, other):
+        if isinstance(other, Lecturer):
+            myAvGrade = self.make_average_grade_lector()
+            anotherAvGrade = other.make_average_grade_lector()
+            return myAvGrade < anotherAvGrade
     def comparelector(self, another_lector):
         if isinstance(another_lector, Lecturer):
             myAvGrade = self.make_average_grade_lector()
